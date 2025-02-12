@@ -1,0 +1,41 @@
+name: Deploy API
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy API
+    runs-on: ubuntu-lastest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Deploy to Server
+        env:
+          SERVER_IP: ${{ secrets.SERVER_IP }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key $SSH_USER@$SERVER_IP << EOF
+            cd /path/to/your/api  # Change to your app directory
+            git pull origin main   # Pull the latest changes
+            source /path/to/venv/bin/activate  # Activate virtual environment
+            pip install -r requirements.txt  # Install dependencies
+            systemctl restart gunicorn  # Restart Gunicorn (or Uvicorn if needed)
+            systemctl restart nginx  # Restart Nginx to apply changes
+          EOF
