@@ -32,7 +32,7 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key $SSH_USER@$SERVER_IP << EOF
-            cd /path/to/your/api  # Change to your app directory
+            cd /home/ec2-user/fastapi-book-project  # Change to your app directory
             git pull origin main   # Pull the latest changes
             source /path/to/venv/bin/activate  # Activate virtual environment
             pip install -r requirements.txt  # Install dependencies
