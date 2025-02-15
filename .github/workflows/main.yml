@@ -25,5 +25,6 @@ jobs:
           pip install -r requirements.txt  # Ensure this file includes pytest
 
       - name: Run Tests with Pytest
-        run: pytest --maxfail=1 --disable-warnings --tb=short
-
+        run: |
+          pytest --maxfail=1 --disable-warnings --tb=short
+        continue-on-error: false
